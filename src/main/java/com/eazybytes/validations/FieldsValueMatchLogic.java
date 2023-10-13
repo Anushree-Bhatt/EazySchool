@@ -1,0 +1,35 @@
+package com.eazybytes.validations;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import org.springframework.beans.BeanWrapperImpl;
+
+import com.eazybytes.annotations.FieldsValueMatch;
+
+public class FieldsValueMatchLogic implements ConstraintValidator<FieldsValueMatch, Object> {
+
+	private String field; //field name
+	private String fieldMatch; //another field name
+	
+	@Override
+	public void initialize(FieldsValueMatch constraintAnnotation) {
+	    this.field = constraintAnnotation.field();
+	    this.fieldMatch = constraintAnnotation.fieldMatch();
+	}
+	
+	@Override
+	public boolean isValid(Object value,ConstraintValidatorContext context) {
+	    Object fieldValue = new BeanWrapperImpl(value)
+	            .getPropertyValue(field);
+	    Object fieldMatchValue = new BeanWrapperImpl(value)
+	            .getPropertyValue(fieldMatch);
+	    if (fieldValue != null && fieldMatchValue != null) {
+	        return fieldValue.equals(fieldMatchValue);
+	    } else {
+	        return false;
+	    }
+	}
+}
+
+
